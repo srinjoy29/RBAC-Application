@@ -13,35 +13,28 @@ Features
 -   Add, update, and delete users with ease.
 -   Assign roles dynamically and update user profiles.
 -   Intelligent user search with real-time filtering.
+  ![image](https://github.com/user-attachments/assets/d8bfb478-a45e-49e4-9e25-1e85efcb90c2)
+
 
 ### 🔒 Role Management
 
 -   Create roles and customize their capabilities.
 -   Assign multiple permissions to each role for flexibility.
 -   Comprehensive role-permission mapping with visual tools.
+  ![image](https://github.com/user-attachments/assets/28a263e5-3f14-4084-ab87-7aa55fece580)
+
 
 ### 🛠 Permission Management
 
 -   Fine-grained permission controls for specific tasks.
 -   Permission association based on role hierarchies.
 -   Permission audit to track and optimize access control.
+  ![image](https://github.com/user-attachments/assets/2519eb11-913b-4096-974d-3800b4f2d701)
 
-### 📈 Analytics Dashboard
-
--   Graphical summaries of users, roles, and permissions.
--   Interactive charts for better insights into system usage.
--   Real-time updates powered by React Query for live data.
-
-### 🌐 User Interface
-
--   Minimalistic design leveraging Tailwind CSS.
--   Accessibility-first components, including modals and forms.
--   Dark mode support for improved user experience.
 
 ### 🔍 Advanced Table Features
 
 -   Real-time search and pagination.
--   Sortable columns for organized data views.
 -   Role-based visibility for sensitive data.
 
 ### 🚨 Robust Error Management
@@ -53,16 +46,14 @@ Features
 ### 🎯 Reusable Components
 
 -   **Search Input**: Optimized for high-speed queries.
--   **Dropdowns**: Filter by multiple criteria.
 -   **Action Buttons**: Customizable icons for user actions.
--   **Charts**: Dynamic and interactive system metrics.
 
 * * * * *
 
 Technology Stack
 ----------------
 
--   **Frontend**: React, Tailwind CSS, React Query, ApexCharts.
+-   **Frontend**: React, Tailwind CSS, React Query .
 -   **State Management**: Context API and custom hooks.
 -   **Routing**: React Router with nested route handling.
 -   **Error Handling**: Centralized Error Boundary with fallback UI.
@@ -78,7 +69,7 @@ Setup Instructions
 
     Copy code
 
-    `git clone https://github.com/username/rbac-system.git`
+    `git clone https://github.com/srinjoy29/RBAC-Application.git`
 
 2.  Navigate to the project directory:
 
@@ -86,7 +77,7 @@ Setup Instructions
 
     Copy code
 
-    `cd rbac-system`
+    `cd RBAC-Application`
 
 3.  Install required dependencies:
 
@@ -104,7 +95,7 @@ Setup Instructions
 
     `npm start`
 
-5.  Open your browser at `http://localhost:3000`.
+5.  Open your browser at `http://localhost:5173`.
 
 * * * * *
 
