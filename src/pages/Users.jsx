@@ -1,83 +1,93 @@
-import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { users, roles } from '../services/api'
-import Table from '../components/Table'
-import Modal from '../components/Modal'
-import SearchBar from '../components/SearchBar'
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { users, roles } from '../services/api';
+import Table from '../components/Table';
+import Modal from '../components/Modal';
+import SearchBar from '../components/SearchBar';
 
-import { useSort } from '../components/useSort'
-import { useFilter } from '../components/useFilter'
-import useAuthStore from '../store/authStore' // Assuming you are using an auth store to manage logged-in user
+import { useSort } from '../components/useSort'; // Custom hook for sorting data
+import { useFilter } from '../components/useFilter'; // Custom hook for filtering data
+import useAuthStore from '../store/authStore'; // Authentication store for managing logged-in user state
 
 const statusOptions = [
   { value: 'active', label: 'Active' },
   { value: 'inactive', label: 'Inactive' },
-]
+];
 
 const roleOptions = [
   { value: 'admin', label: 'Admin' },
   { value: 'editor', label: 'Editor' },
   { value: 'viewer', label: 'Viewer' },
-]
+];
 
 function Users() {
-  const queryClient = useQueryClient()
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedUser, setSelectedUser] = useState(null)
-  const [searchTerm, setSearchTerm] = useState('')
+  const queryClient = useQueryClient(); // For cache invalidation and query management
+  const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
+  const [selectedUser, setSelectedUser] = useState(null); // State for the user being edited
+  const [searchTerm, setSearchTerm] = useState(''); // Search term state
 
-  // Get the current logged-in user's data
-  const currentUser = useAuthStore.getState().user
+  // Get current logged-in user's data from the authentication store
+  const currentUser = useAuthStore.getState().user;
 
+  // Fetch all users data
   const { data: usersData } = useQuery({
-    queryKey: ['users'],
-    queryFn: users.getAll,
-  })
+    queryKey: ['users'], // Unique query identifier
+    queryFn: users.getAll, // API function to fetch users
+  });
 
+  // Fetch all roles data
   const { data: rolesData } = useQuery({
-    queryKey: ['roles'],
-    queryFn: roles.getAll,
-  })
+    queryKey: ['roles'], // Unique query identifier
+    queryFn: roles.getAll, // API function to fetch roles
+  });
 
-  const { sortedData, sortConfig, requestSort } = useSort(usersData || [])
-  const { filteredData, filters, updateFilter } = useFilter(sortedData)
+  // Sorting hook for user data
+  const { sortedData, sortConfig, requestSort } = useSort(usersData || []);
 
+  // Filtering hook for user data
+  const { filteredData, filters, updateFilter } = useFilter(sortedData);
+
+  // Mutation to create a new user
   const createMutation = useMutation({
-    mutationFn: users.create,
+    mutationFn: users.create, // API function to create a user
     onSuccess: () => {
-      queryClient.invalidateQueries(['users'])
-      setIsModalOpen(false)
+      queryClient.invalidateQueries(['users']); // Refresh user data
+      setIsModalOpen(false); // Close modal
     },
-  })
+  });
 
+  // Mutation to update an existing user
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => users.update(id, data),
+    mutationFn: ({ id, data }) => users.update(id, data), // API function to update a user
     onSuccess: () => {
-      queryClient.invalidateQueries(['users'])
-      setIsModalOpen(false)
+      queryClient.invalidateQueries(['users']); // Refresh user data
+      setIsModalOpen(false); // Close modal
     },
-  })
+  });
 
+  // Mutation to delete a user
   const deleteMutation = useMutation({
-    mutationFn: users.delete,
+    mutationFn: users.delete, // API function to delete a user
     onSuccess: () => {
-      queryClient.invalidateQueries(['users'])
+      queryClient.invalidateQueries(['users']); // Refresh user data
     },
-  })
+  });
 
+  // Handle search functionality
   const handleSearch = (term) => {
-    setSearchTerm(term)
-  }
+    setSearchTerm(term); // Update the search term state
+  };
 
-  const filteredAndSearchedData = filteredData.filter(user => {
-    if (!searchTerm) return true
-    const searchLower = searchTerm.toLowerCase()
+  // Filter and search data for rendering
+  const filteredAndSearchedData = filteredData.filter((user) => {
+    if (!searchTerm) return true; // If no search term, return all data
+    const searchLower = searchTerm.toLowerCase(); // Convert search term to lowercase
     return (
-      user.name.toLowerCase().includes(searchLower) ||
-      user.email.toLowerCase().includes(searchLower) ||
-      user.role.toLowerCase().includes(searchLower)
-    )
-  })
+      user.name.toLowerCase().includes(searchLower) || // Match by name
+      user.email.toLowerCase().includes(searchLower) || // Match by email
+      user.role.toLowerCase().includes(searchLower) // Match by role
+    );
+  });
 
   const columns = [
     {

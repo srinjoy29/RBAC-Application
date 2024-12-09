@@ -50,58 +50,66 @@ function RolesList({ data, onEdit, onDelete }) {
 }
 
 function Roles() {
-  const queryClient = useQueryClient()
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedRole, setSelectedRole] = useState(null)
+  const queryClient = useQueryClient(); // To manage query cache and triggers
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to handle modal visibility
+  const [selectedRole, setSelectedRole] = useState(null); // State to manage the selected role for edit
 
+  // Fetch roles data
   const { data: rolesData } = useQuery({
-    queryKey: ['roles'],
-    queryFn: roles.getAll,
-  })
+    queryKey: ['roles'], // Query key for roles
+    queryFn: roles.getAll, // API call to fetch roles
+  });
 
+  // Fetch permissions data
   const { data: permissionsData } = useQuery({
-    queryKey: ['permissions'],
-    queryFn: permissions.getAll,
-  })
+    queryKey: ['permissions'], // Query key for permissions
+    queryFn: permissions.getAll, // API call to fetch permissions
+  });
 
+  // Mutation to create a new role
   const createMutation = useMutation({
-    mutationFn: roles.create,
+    mutationFn: roles.create, // API call to create a role
     onSuccess: () => {
-      queryClient.invalidateQueries(['roles'])
-      setIsModalOpen(false)
+      queryClient.invalidateQueries(['roles']); // Refresh roles data
+      setIsModalOpen(false); // Close modal
     },
-  })
+  });
 
+  // Mutation to update an existing role
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => roles.update(id, data),
+    mutationFn: ({ id, data }) => roles.update(id, data), // API call to update a role
     onSuccess: () => {
-      queryClient.invalidateQueries(['roles'])
-      setIsModalOpen(false)
+      queryClient.invalidateQueries(['roles']); // Refresh roles data
+      setIsModalOpen(false); // Close modal
     },
-  })
+  });
 
+  // Mutation to delete a role
   const deleteMutation = useMutation({
-    mutationFn: roles.delete,
+    mutationFn: roles.delete, // API call to delete a role
     onSuccess: () => {
-      queryClient.invalidateQueries(['roles'])
+      queryClient.invalidateQueries(['roles']); // Refresh roles data
     },
-  })
+  });
 
+  // Handle form submission for create or update role
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    const formData = new FormData(e.target)
+    e.preventDefault(); // Prevent default form submission
+    const formData = new FormData(e.target); // Extract form data
     const data = {
-      name: formData.get('name'),
-      description: formData.get('description'),
-      permissions: Array.from(formData.getAll('permissions')),
-    }
+      name: formData.get('name'), // Get role name
+      description: formData.get('description'), // Get role description
+      permissions: Array.from(formData.getAll('permissions')), // Get selected permissions
+    };
 
     if (selectedRole) {
-      updateMutation.mutate({ id: selectedRole.id, data })
+      // Update existing role
+      updateMutation.mutate({ id: selectedRole.id, data });
     } else {
-      createMutation.mutate(data)
+      // Create a new role
+      createMutation.mutate(data);
     }
-  }
+  };
 
   return (
     <div className="space-y-6">

@@ -1,41 +1,44 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { auth } from '../services/api'
-import useAuthStore from '../store/authStore'
+import { useState } from 'react'; // Import useState hook for managing component state
+import { useNavigate } from 'react-router-dom'; // Import useNavigate hook for navigation
+import { auth } from '../services/api'; // Import authentication service for API calls
+import useAuthStore from '../store/authStore'; // Import custom authentication store
 
+// Define Register component
 function Register() {
-  const navigate = useNavigate()
-  const setAuth = useAuthStore(state => state.setAuth)
+  const navigate = useNavigate(); // Navigation hook to redirect users
+  const setAuth = useAuthStore(state => state.setAuth); // Access auth store to set user and token
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
-  })
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+  }); // State for storing form data
+  const [error, setError] = useState(''); // State for handling error messages
+  const [loading, setLoading] = useState(false); // State to track loading status
 
+  // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
+    e.preventDefault(); // Prevent default form submission
+    setError(''); // Clear previous errors
 
+    // Check if passwords match
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match')
-      return
+      setError('Passwords do not match');
+      return;
     }
 
-    setLoading(true)
+    setLoading(true); // Set loading state while the request is in progress
 
     try {
-      const { user, token } = await auth.register(formData)
-      setAuth(user, token)
-      navigate('/users')
+      const { user, token } = await auth.register(formData); // Call the register API
+      setAuth(user, token); // Store user and token in auth store
+      navigate('/users'); // Navigate to the users page upon successful registration
     } catch (err) {
-      setError(err.message || 'Failed to register')
+      setError(err.message || 'Failed to register'); // Set error message if registration fails
     } finally {
-      setLoading(false)
+      setLoading(false); // Reset loading state
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">

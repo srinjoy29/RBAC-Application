@@ -1,36 +1,39 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { auth } from "../services/api";
-import useAuthStore from "../store/authStore";
+import { useState } from "react"; // Import useState for state management
+import { useNavigate, Link } from "react-router-dom"; // Import navigation and Link for routing
+import { auth } from "../services/api"; // Import authentication service
+import useAuthStore from "../store/authStore"; // Import custom auth store for state management
 
+// Define Login component
 function Login() {
-  const navigate = useNavigate();
-  const setAuth = useAuthStore((state) => state.setAuth);
+  const navigate = useNavigate(); // Navigation hook for route changes
+  const setAuth = useAuthStore((state) => state.setAuth); // Access auth store to set user and token
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-  });
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  }); // State for form data
+  const [error, setError] = useState(""); // State for error messages
+  const [loading, setLoading] = useState(false); // State for loading indicator
 
+  // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+    e.preventDefault(); // Prevent default form submission
+    setError(""); // Clear any previous errors
+    setLoading(true); // Set loading state
 
     try {
-      const { user, token } = await auth.login(formData);
-      setAuth(user, token);
-      navigate("/users");
+      const { user, token } = await auth.login(formData); // Attempt login
+      setAuth(user, token); // Store user and token in auth store
+      navigate("/users"); // Navigate to the users page upon success
     } catch (err) {
-      setError(err.message || "Failed to login");
+      setError(err.message || "Failed to login"); // Set error message
     } finally {
-      setLoading(false);
+      setLoading(false); // Reset loading state
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      {/* Container for login form */}
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-sm">
         <h2 className="text-2xl font-extrabold text-center text-blue-600 mb-4">Welcome Back</h2>
         <p className="text-center text-sm text-gray-600 mb-6">
@@ -41,6 +44,7 @@ function Login() {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Error display */}
           {error && (
             <div className="bg-red-50 p-4 border border-red-100 rounded-md">
               <div className="flex">
@@ -60,6 +64,7 @@ function Login() {
             </div>
           )}
 
+          {/* Email input */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email address</label>
             <input
@@ -72,6 +77,7 @@ function Login() {
             />
           </div>
 
+          {/* Password input */}
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
             <input
@@ -84,6 +90,7 @@ function Login() {
             />
           </div>
 
+          {/* Submit button */}
           <button
             type="submit"
             className="w-full py-3 px-4 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -99,14 +106,11 @@ function Login() {
           </button>
         </form>
 
+        {/* Test account credentials */}
         <div className="mt-6 text-left">
           <p className="font-semibold text-gray-700">Test Accounts:</p>
           <div className="bg-gray-100 p-4 rounded-md mt-2">
-            {[
-              { email: "admin@example.com", password: "admin" },
-              { email: "editor@example.com", password: "admin" },
-              { email: "viewer@example.com", password: "admin" },
-            ].map((account, index) => (
+            {[{ email: "admin@example.com", password: "admin" }].map((account, index) => (
               <div key={index} className="flex justify-between py-1 text-sm text-gray-600 hover:bg-gray-200">
                 <span>{account.email}</span>
                 <span>{account.password}</span>
@@ -115,6 +119,7 @@ function Login() {
           </div>
         </div>
 
+        {/* Footer */}
         <footer className="mt-6 text-center text-xs text-gray-500">
           <p>© {new Date().getFullYear()} RBAC System. All rights reserved.</p>
         </footer>

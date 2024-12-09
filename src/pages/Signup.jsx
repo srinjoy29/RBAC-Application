@@ -1,71 +1,76 @@
-import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import { auth } from '../services/api'
-import useAuthStore from '../store/authStore'
-import { getValidationError } from '../utils/validation'
+import { useState } from 'react'; // Import useState hook for managing component state
+import { useNavigate, Link } from 'react-router-dom'; // Import hooks for navigation and routing
+import { auth } from '../services/api'; // Import authentication service for API calls
+import useAuthStore from '../store/authStore'; // Import custom authentication store
+import { getValidationError } from '../utils/validation'; // Import validation utility function
 
+// Define Signup component
 function Signup() {
-  const navigate = useNavigate()
-  const setAuth = useAuthStore(state => state.setAuth)
+  const navigate = useNavigate(); // Navigation hook to redirect users
+  const setAuth = useAuthStore(state => state.setAuth); // Access auth store to set user and token
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
-  })
-  const [errors, setErrors] = useState({})
-  const [loading, setLoading] = useState(false)
+  }); // State for storing form data
+  const [errors, setErrors] = useState({}); // State for form validation errors
+  const [loading, setLoading] = useState(false); // State to track loading status
 
+  // Function to validate the form data
   const validateForm = () => {
-    const newErrors = {}
-    newErrors.name = getValidationError('name', formData.name)
-    newErrors.email = getValidationError('email', formData.email)
-    newErrors.password = getValidationError('password', formData.password)
+    const newErrors = {};
+    newErrors.name = getValidationError('name', formData.name); // Validate name
+    newErrors.email = getValidationError('email', formData.email); // Validate email
+    newErrors.password = getValidationError('password', formData.password); // Validate password
     
+    // Check if passwords match
     if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match'
+      newErrors.confirmPassword = 'Passwords do not match';
     }
 
-    setErrors(newErrors)
-    return !Object.values(newErrors).some(error => error)
-  }
+    setErrors(newErrors); // Update errors state with validation errors
+    return !Object.values(newErrors).some(error => error); // Return true if no errors
+  };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault(); // Prevent default form submission
     
-    if (!validateForm()) {
-      return
+    if (!validateForm()) { // Validate form before submitting
+      return;
     }
 
-    setLoading(true)
+    setLoading(true); // Set loading state while the request is in progress
 
     try {
-      const { user, token } = await auth.register(formData)
-      setAuth(user, token)
-      navigate('/users')
+      const { user, token } = await auth.register(formData); // Call the register API
+      setAuth(user, token); // Store user and token in auth store
+      navigate('/users'); // Navigate to the users page upon successful registration
     } catch (err) {
       setErrors(prev => ({
         ...prev,
-        submit: err.message || 'Failed to create account'
-      }))
+        submit: err.message || 'Failed to create account', // Set submit error message
+      }));
     } finally {
-      setLoading(false)
+      setLoading(false); // Reset loading state
     }
-  }
+  };
 
+  // Handle input field changes
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
-    }))
+      [name]: value, // Update form data with new value
+    }));
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
-        [name]: null
-      }))
+        [name]: null, // Clear individual field error when the user types
+      }));
     }
-  }
+  };
 
   return (
     <div className="auth-container">
